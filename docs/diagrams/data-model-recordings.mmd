@@ -1,0 +1,38 @@
+%%{init: {"theme": "base", "themeCSS": "background-color: #ffffff;", "themeVariables": {"primaryColor": "#ffffff", "primaryTextColor": "#1a202c", "primaryBorderColor": "#2b6cb0", "lineColor": "#3182ce", "clusterBkg": "#f7fafc", "clusterBorder": "#a0aec0", "titleColor": "#1a202c", "edgeLabelBackground": "#ffffff", "tertiaryColor": "#ffffff", "fontSize": "15px", "actorBkg": "#ebf8ff", "actorBorder": "#2b6cb0", "noteBkgColor": "#fefcbf", "noteBorderColor": "#d69e2e", "signalColor": "#1a202c", "signalTextColor": "#1a202c", "labelBoxBkgColor": "#ebf8ff", "loopTextColor": "#1a202c"}}}%%
+erDiagram
+  direction TB
+  USER ||--o{ DEVICE : owns
+  USER ||--o{ RECORDING : makes
+  DEVICE ||--o{ RECORDING : records
+  RECORDING ||--o{ CHUNK : "uploaded as"
+  RECORDING ||--o{ PIPELINE_STEP : "processed by"
+  USER {
+    uuid id PK
+    text region
+  }
+  DEVICE {
+    uuid id PK
+    uuid user_id FK
+    text status "active, lost, revoked"
+  }
+  RECORDING {
+    uuid id PK "made on the wearable"
+    uuid user_id FK
+    uuid device_id FK
+    timestamptz started_at
+    int chunk_count
+    text status "uploading, processing, ready, failed"
+  }
+  CHUNK {
+    uuid recording_id PK, FK
+    int chunk_number PK "0, 1, 2 in time order"
+    text s3_key
+    text sha256
+    int duration_ms
+  }
+  PIPELINE_STEP {
+    uuid recording_id PK, FK
+    text step PK
+    text status
+    int attempts
+  }

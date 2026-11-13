@@ -1,0 +1,36 @@
+%%{init: {"theme": "base", "themeCSS": "background-color: #ffffff;", "themeVariables": {"primaryColor": "#ffffff", "primaryTextColor": "#1a202c", "primaryBorderColor": "#2b6cb0", "lineColor": "#3182ce", "clusterBkg": "#f7fafc", "clusterBorder": "#a0aec0", "titleColor": "#1a202c", "edgeLabelBackground": "#ffffff", "tertiaryColor": "#ffffff", "fontSize": "15px", "actorBkg": "#ebf8ff", "actorBorder": "#2b6cb0", "noteBkgColor": "#fefcbf", "noteBorderColor": "#d69e2e", "signalColor": "#1a202c", "signalTextColor": "#1a202c", "labelBoxBkgColor": "#ebf8ff", "loopTextColor": "#1a202c"}}}%%
+erDiagram
+  direction TB
+  USER ||--o{ PERSON : names
+  RECORDING ||--o{ SPEAKER : has
+  RECORDING ||--o{ SEGMENT : "transcribed into"
+  RECORDING ||--o{ SUMMARY : "summarized in"
+  PERSON |o--o{ SPEAKER : "attributed to"
+  SPEAKER ||--|{ SEGMENT : says
+  PERSON {
+    uuid id PK
+    uuid user_id FK
+    text display_name
+  }
+  SPEAKER {
+    uuid recording_id PK, FK
+    text label PK
+    uuid person_id FK "null until named"
+    text state "wearer, named, unknown"
+    float score
+    text decided_by "system, wearer"
+  }
+  SEGMENT {
+    bigint id PK
+    uuid recording_id FK
+    text speaker_label FK
+    int start_ms
+    int end_ms
+    text text
+    bool overlapped
+  }
+  SUMMARY {
+    uuid recording_id PK, FK
+    int version PK
+    jsonb claims "each claim cites segment ids"
+  }

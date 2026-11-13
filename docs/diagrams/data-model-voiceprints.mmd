@@ -1,0 +1,20 @@
+%%{init: {"theme": "base", "themeCSS": "background-color: #ffffff;", "themeVariables": {"primaryColor": "#ffffff", "primaryTextColor": "#1a202c", "primaryBorderColor": "#2b6cb0", "lineColor": "#3182ce", "clusterBkg": "#f7fafc", "clusterBorder": "#a0aec0", "titleColor": "#1a202c", "edgeLabelBackground": "#ffffff", "tertiaryColor": "#ffffff", "fontSize": "15px", "actorBkg": "#ebf8ff", "actorBorder": "#2b6cb0", "noteBkgColor": "#fefcbf", "noteBorderColor": "#d69e2e", "signalColor": "#1a202c", "signalTextColor": "#1a202c", "labelBoxBkgColor": "#ebf8ff", "loopTextColor": "#1a202c"}}}%%
+erDiagram
+  VOICE ||--|{ CONTRIBUTION : "built from"
+  VOICE {
+    uuid id PK
+    uuid user_id
+    uuid person_id "the person the wearer named"
+    text kind "wearer, other"
+    bytea voiceprint "weighted mean of its evidence, encrypted with the voice's key"
+    timestamptz last_heard_at
+  }
+  CONTRIBUTION {
+    uuid voice_id PK, FK
+    uuid recording_id PK
+    text speaker_label PK
+    bytea embedding "encrypted with the voice's key"
+    float speech_seconds
+    jsonb ranges "time ranges of its speech"
+    bool from_naming "the wearer's own naming, never evicted"
+  }
